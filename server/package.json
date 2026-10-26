@@ -1,0 +1,1 @@
+{"name":"lifeos-api","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node src/server.js","start":"node src/server.js"},"dependencies":{"bcryptjs":"latest","cookie-parser":"latest","cors":"latest","dotenv":"latest","express":"latest"}}
