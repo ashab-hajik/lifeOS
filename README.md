@@ -1,56 +1,40 @@
 # LifeOS
 
-LifeOS is a responsive personal life dashboard for tasks, goals, habits, planning, expenses, and activity analytics. The client uses React, Vite, Tailwind CSS, React Router, Framer Motion, Lucide, and Recharts. No database is required for the demo.
+LifeOS is a responsive personal dashboard for tasks, goals, habits, daily planning, expenses, and activity analytics.
 
-## Run locally
+## Frontend-only college demo
 
-Requirements: Node.js 20+ and npm.
+The Vercel frontend does not require the Express backend or a database. The sign-in screen uses local demo accounts stored in the current browser. Passwords are stored as salted PBKDF2 hashes, but browser-side authentication is **DEMO ONLY** and is not secure authentication. Do not use a real password or sensitive information. Each browser has its own demo accounts and data.
+
+Run the frontend locally:
 
 ```sh
 npm install
-cd server && npm install && cd ..
-copy .env.example .env
-copy server/.env.example server/.env
 npm run dev
 ```
 
-The root development command starts both the Vite client and Express API. Keep that terminal open while using LifeOS. The client runs at http://localhost:5173 and the API at http://localhost:4000.
+Open the Vite URL printed in the terminal (usually http://localhost:5173). Register a demo account, then use its username or email and password to sign in. `npm run dev` starts only Vite; it does not start or contact Express. You can deploy the frontend to Vercel without setting an API URL.
 
-Open http://localhost:5173 and register an account. Authentication is handled by the Express API; the browser stores no password or password hash. App activity persists in localStorage, keyed by the authenticated account ID, so separate accounts have separate task, goal, habit, planner, and expense data.
+## Local persistence
 
-## Express authentication API
+Demo account records are stored in `localStorage` under `lifeos_demo_accounts_v1`; they contain password hashes and salts, never plaintext passwords. The active demo session uses `lifeos_demo_session_v1`. Tasks, goals, habits, planner events, and expenses continue to use the existing account-scoped keys `lifeos_data_v1_<account-id>`.
 
-The Express API includes registration, login, logout, current-user, profile update, Google/GitHub OAuth callbacks, and health endpoints. Account records and bcrypt hashes are stored server-side in `server/data/users.json`; they are never written to browser storage or returned by the API. This file store survives restarts but is a local-demo store, not a production database. Protect and back up this file, and replace the repository with Mongoose when adding MongoDB.
+Signing out removes only the active demo session. It does not remove accounts or LifeOS activity. Existing storage keys from previous versions are left untouched. Since old server account IDs cannot be reliably matched to a new browser-only demo account without the backend, their data is not automatically moved or shared; it remains in localStorage under its original key.
+
+## Existing Express backend
+
+The optional backend remains in `server/` and is not used by the frontend demo. Start it separately only if you are working on backend development:
 
 ```sh
-cd server
-npm install
-copy .env.example .env
-npm run dev
+npm run server
 ```
 
-Set `SESSION_SECRET` to a long random value and `CLIENT_ORIGIN` to the client origin(s). The API uses HttpOnly, same-site cookies and bcrypt password hashes. MongoDB is not currently connected. In the current design, browser localStorage contains only LifeOS app data keyed by the server-issued account ID; logout does not erase that data.
-
-API routes include `GET /api/health`, register/login/logout/me/profile routes, and `/api/auth/google` and `/api/auth/github` OAuth starts with matching `/callback` routes. Password recovery returns 501 until email delivery is configured.
-
-## Optional Google and GitHub sign-in
-
-OAuth is implemented but stays unavailable until provider credentials are configured. Create OAuth apps with these local callback URLs:
-
-- Google authorized redirect URI: `http://localhost:4000/api/auth/google/callback`
-- GitHub authorization callback URL: `http://localhost:4000/api/auth/github/callback`
-
-Copy `server/.env.example` to `server/.env`, then fill in `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET`. Keep those secrets in the server environment only. The configured callback URL must exactly match the provider console. Google requests `openid email profile`; GitHub requests `read:user user:email` and needs a verified email address. On a deployed site, use the deployed HTTPS API callback URL and set `API_ORIGIN` and `CLIENT_ORIGIN` to the matching origins.
+The backend currently persists users in `server/data/users.json`. A serverless Vercel filesystem is not a persistent database, so that backend can continue to report a filesystem error if deployed there. It can remain undeployed/unused for the college demonstration; the frontend no longer sends auth or data requests to it.
 
 ## Features
 
-- Responsive dark dashboard with live task, goal, and habit metrics and a seven-day activity chart.
-- Backend registration and sign-in by username or email, OAuth starts/callbacks, password visibility and strength hints, and account-scoped local data.
+- Responsive dashboard, charts, and analytics.
 - Task create/edit/delete, status changes, due dates, priorities, filtering, search, and sorting.
-- Goal progress tracking, habit check-ins and weekly history, daily planner events, expense categories and history.
-- Analytics from actual stored activity, profile/preferences, JSON export, and demo-data clearing.
-- Express auth endpoints with server-side validation, bcrypt, HttpOnly cookie sessions, CORS, and centralized errors.
-
-## Notes and optional integrations
-
-OAuth login creates or finds an account only after the provider callback and verified identity succeed; missing credentials return a clear login-page error. Email recovery still needs an email provider. For a deployment, persist app entities server-side and add rate limiting. See `server/.env.example` for provider variables.
+- Goal progress, habit check-ins, weekly history, planner events, and expense tracking.
+- Profile preferences, JSON export, and demo-data clearing.
+- Local demo registration/login by username or email, persistent browser session, and logout.

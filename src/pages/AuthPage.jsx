@@ -88,7 +88,11 @@ export function AuthPage({ register: isRegister = false }) {
 
   function startOAuth(provider) {
     setError('');
-    beginOAuth(provider);
+    try {
+      beginOAuth(provider);
+    } catch (providerError) {
+      setError(providerError.message);
+    }
   }
 
   return (
@@ -130,6 +134,9 @@ export function AuthPage({ register: isRegister = false }) {
           <div className="form-kicker">{isRegister ? 'GET STARTED' : 'WELCOME BACK'}</div>
           <h2>{isRegister ? 'Create your account' : 'Sign in to LifeOS'}</h2>
           <p className="auth-lede">{isRegister ? 'Your more intentional life starts here.' : 'Pick up where you left off.'}</p>
+          <div className="demo-auth-notice" role="note">
+            <b>DEMO ONLY</b> Accounts are stored in this browser. This is not secure authentication; do not use a real password.
+          </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
             {isRegister && <>
@@ -165,7 +172,7 @@ export function AuthPage({ register: isRegister = false }) {
             ) : (
               <div className="form-options">
                 <label className="remember"><input type="checkbox" checked={form.remember} onChange={(event) => updateField('remember', event.target.checked)} /> Remember me</label>
-                <button type="button" className="text-link" onClick={() => notify('Password recovery will be available when email delivery is configured.')}>Forgot password?</button>
+                <button type="button" className="text-link" onClick={() => notify('Password recovery is not available in this browser-only demo.')}>Forgot password?</button>
               </div>
             )}
 
@@ -184,7 +191,7 @@ export function AuthPage({ register: isRegister = false }) {
             {isRegister ? 'Already have an account?' : 'New to LifeOS?'}{' '}
             <NavLink to={isRegister ? '/login' : '/register'}>{isRegister ? 'Sign in' : 'Create an account'}</NavLink>
           </div>
-          <div className="auth-security"><ShieldCheck size={14} /> Your data is private and securely stored</div>
+          <div className="auth-security"><ShieldCheck size={14} /> Demo data stays in this browser</div>
         </div>
       </div>
     </div>

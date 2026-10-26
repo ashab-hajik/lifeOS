@@ -7,7 +7,7 @@ import {today,pretty,streakDays} from '../utils/date.js';
 import {cx} from '../utils/classNames.js';
 import {id} from '../repositories/localStore.js';
 import {Button,Dialog,TaskLine} from '../components/common/Actions.jsx';
-import {Card,Progress,Empty,Stat,PageHeading} from '../components/common/Display.jsx';
+import {Avatar,Card,Progress,Empty,Stat,PageHeading} from '../components/common/Display.jsx';
 import {TaskForm,Select,SimpleForm} from '../components/common/FormControls.jsx';
 import {confirmDelete} from '../components/common/Actions.jsx';
 

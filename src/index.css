@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+.demo-auth-notice{margin:-3px 0 3px;padding:10px 12px;border:1px solid #a78bfa35;border-radius:8px;background:#8b5cf60d;color:#aeb5c8;font-size:10px;line-height:1.6}.demo-auth-notice b{display:block;margin-bottom:3px;color:#b89bff;font-size:9px;letter-spacing:1px}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
